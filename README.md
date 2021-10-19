@@ -4,3 +4,4 @@ bradley is a Discord Bot that allows users to become the chaser and challenge ot
 
 Use the `/chase` command to begin a chase.
 
+Questions are provided by https://trivia.willfry.co.uk/
