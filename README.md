@@ -1,6 +1,6 @@
 # bradley
 
-bradley is a Discord Bot that allows a user to challenge others to The Chase.
+bradley is a Discord bot that allows a user to challenge others to The Chase.
 
 Use the `/chase` command to begin a chase.
 
