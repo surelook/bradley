@@ -172,10 +172,11 @@ class Chase {
     });
 
     collector.on("end", async (collected) => {
-      let contestantCorrect, chaserCorrect;
+      let contestantCorrect, chaserCorrect, contestantAnswer, chaserAnswer;
 
       collected.forEach((interaction) => {
         if (interaction.user === this.chaser) {
+          chaserAnswer = interaction.customId;
           if (interaction.customId === this.currentQuestion.correctAnswer) {
             this.chaserRemaining--;
             chaserCorrect = true;
@@ -183,6 +184,7 @@ class Chase {
         }
 
         if (interaction.user === this.contestant) {
+          contestantAnswer = interaction.customId;
           if (interaction.customId === this.currentQuestion.correctAnswer) {
             this.contestantRemaining--;
             contestantCorrect = true;
@@ -192,48 +194,39 @@ class Chase {
 
       await wait(1000);
       await this.thread.send(
+        `${this.contestant.username} answers ${contestantAnswer}.`
+      );
+
+      await wait(1000);
+      await this.thread.send(
         `The correct answer is ${this.currentQuestion.correctAnswer}.`
       );
 
-      if (chaserCorrect && contestantCorrect) {
+      await wait(1000);
+      await this.thread.send(`The Chaser answers ${chaserAnswer}.`);
+
+      if (
+        chaserCorrect &&
+        !contestantCorrect &&
+        this.chaserRemaining - this.contestantRemaining > 1
+      ) {
         await wait(1000);
         await this.thread.send(
-          `${this.contestant.username} goes right with ${this.currentQuestion.correctAnswer}.`
+          `The Chaser takes one step closer to ${this.contestant.username}`
         );
+      }
 
+      if (!chaserCorrect && contestantCorrect && this.contestantRemaining > 1) {
         await wait(1000);
-        await this.thread.send(`The Chaser also goes right.`);
+        await this.thread.send(
+          `${this.contestant.username} takes one step closer to safety`
+        );
       }
 
       if (!chaserCorrect && !contestantCorrect) {
         await wait(1000);
-        await this.thread.send(`${this.contestant.username} gets it wrong.`);
-
-        await wait(1000);
         await this.thread.send(
-          `The Chaser also gets it wrong. We stay where we are.`
-        );
-      }
-
-      if (!chaserCorrect && contestantCorrect) {
-        await wait(1000);
-        await this.thread.send(
-          `${this.contestant.username} goes right with ${this.currentQuestion.correctAnswer}.`
-        );
-
-        await wait(1000);
-        await this.thread.send(
-          `The Chaser gets it wrong and ${this.contestant.username} takes one stap closer to home.`
-        );
-      }
-
-      if (chaserCorrect && !contestantCorrect) {
-        await wait(1000);
-        await this.thread.send(`${this.contestant.username} goes wrong.`);
-
-        await wait(1000);
-        await this.thread.send(
-          `The Chaser gets it right with ${this.currentQuestion.correctAnswer}.`
+          `Nobody gets it right and everyone stays where they are.`
         );
       }
 
